@@ -100,6 +100,7 @@
 
         /* Journey Timeline */
         .timeline-container { position: relative; padding-left: 2.5rem; margin-left: 1rem; }
+        
         @media (min-width: 768px) {
             .timeline-container { padding-left: 3.5rem; margin-left: 2rem; }
         }
@@ -112,6 +113,7 @@
             box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.2);
             z-index: 10;
         }
+        
         @media (min-width: 768px) {
             .timeline-dot { left: -3.5rem; }
         }
@@ -150,6 +152,7 @@
             border: 1px solid #f3f4f6;
             border-radius: 1.25rem;
             padding: 2rem;
+            margin-bottom: 2rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             flex-shrink: 0;
@@ -178,10 +181,10 @@
         }
         .marquee-track {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             width: max-content;
             animation: scrollMarquee 40s linear infinite;
-            padding: 1rem 0;
+            padding: 2rem 0;
         }
         .marquee-track:hover {
             animation-play-state: paused;
@@ -320,6 +323,11 @@
             </div>
         </div>
     </section>
+    
+    
+    
+    
+    
 
     <section id="about-details" class="py-20 pb-32 bg-surface">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -373,6 +381,12 @@
             </div>
         </div>
     </section>
+    
+    
+    
+    
+    
+    
 
     <section id="benefits" class="pt-24 pb-[calc(6rem+5vw)] text-white relative z-20">
         <div class="absolute inset-0 bg-darkNavy z-0" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 5vw));"></div>
@@ -422,12 +436,14 @@
 
 
 
-   <section id="testimonials" class="py-24 bg-white overflow-hidden">
+   <section id="testimonials" class="py-36 mb-8 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 gs-reveal">
-                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-2 i18n" data-en="Testimonials" data-es="Testimonios">Testimonials</h3>
-                <h2 class="text-4xl font-bold text-navy mb-6 i18n" data-en="What Our Alumni Say" data-es="Lo Que Dicen Nuestros Egresados">What Our Alumni Say</h2>
-                <p class="text-gray-500 text-lg max-w-2xl mx-auto i18n" data-en="Real results from real people who turned their ideas into launched products." data-es="Resultados reales de personas que convirtieron sus ideas en productos lanzados.">Real results from real people who turned their ideas into launched products.</p>
+            <div class="text-center mb-0 gs-reveal">
+            
+                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-0 i18n" data-en="Testimonials" data-es="Testimonios">Testimonials</h3>
+                
+                <h2 class="text-4xl font-bold text-navy mb-6">What Our Alumni Say</h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Real results from real people who turned their ideas into launched products.</p>
             </div>
         </div>
 
@@ -620,7 +636,7 @@
 
 
 
- <section id="faq" class="py-24 bg-white">
+ <section id="faq" class="py-40 mb-8 bg-white">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 gs-reveal">
                 <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-2 i18n" data-en="FAQ" data-es="Preguntas Frecuentes">FAQ</h3>
@@ -729,6 +745,8 @@
             </div>
         </div>
     </section>
+    
+    
 
 
     <script>
@@ -744,7 +762,7 @@
 
     <footer class="bg-darkNavy pb-8 pt-12 text-center text-white relative z-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <img src="https://bucket.mlcdn.com/a/3336/3336910/images/faf522af0370c681b61611209d66022cf9fdba1c.png" alt="LaunchQuest Logo" class="h-24 mx-auto mb-8 object-contain opacity-90">
+            <img src="https://bucket.mlcdn.com/a/3336/3336910/images/faf522af0370c681b61611209d66022cf9fdba1c.png" alt="LaunchQuest Logo" class="h-28 mx-auto mb-8 object-contain opacity-90">
             
             <div class="flex justify-center items-center space-x-6 mb-12 flex-wrap gap-y-4">
                 <a href="#" class="text-gray-400 hover:text-white cursor-hover transition-colors">Privacy Policy</a>
