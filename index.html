@@ -809,15 +809,7 @@
 
 
     
- <!-- Back to Top Button -->
 
-<!-- Widget Volver arriba -->
-<div id="back-to-top" onclick="scrollToTop()">
-    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png" alt="Volver arriba" style="width: 40px; height: 40px;">
-</div>
-
-    
-    
 
 
 
@@ -1105,23 +1097,53 @@ var ml_account = ml('accounts', '3336910', 't8p6n6m7b3', 'load');
 
 
     
-    <script>
-// Force scroll to top on page load
-(function() {
-    // Immediate scroll
-    window.scrollTo(0, 0);
     
-    // Scroll again after a tiny delay (handles any delayed scrolling)
-    setTimeout(function() {
-        window.scrollTo(0, 0);
-    }, 10);
-    
-    // One more time after everything loads
-    window.addEventListener('load', function() {
-        window.scrollTo(0, 0);
+<!-- Widget BACK-TO-TOP -->
+<script>
+// Create Back-to-Top Button Dynamically
+document.addEventListener("DOMContentLoaded", function () {
+    // Create the button container
+    const backToTop = document.createElement("div");
+    backToTop.id = "back-to-top";
+    backToTop.style.position = "fixed";
+    backToTop.style.bottom = "20px";
+    backToTop.style.right = "20px";
+    backToTop.style.display = "none";
+    backToTop.style.cursor = "pointer";
+    backToTop.style.zIndex = "9999";
+
+    // Create the image inside the button
+    const backToTopImg = document.createElement("img");
+    backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
+    backToTopImg.alt = "Volver arriba";
+    backToTopImg.style.width = "40px";
+    backToTopImg.style.height = "40px";
+
+    // Append image to the button
+    backToTop.appendChild(backToTopImg);
+
+    // Append button to the body
+    document.body.appendChild(backToTop);
+
+    // Scroll Event Listener
+    window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            backToTop.style.display = "block";
+        } else {
+            backToTop.style.display = "none";
+        }
     });
-})();
+
+    // Click Event for Scrolling to Top
+    backToTop.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+});
 </script>
+<!-- End Widget BACK-TO-TOP -->
     
     
 </body>
