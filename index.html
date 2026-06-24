@@ -806,6 +806,24 @@
     
     
 
+
+    
+ <!-- Back to Top Button -->
+
+<!-- Widget Volver arriba -->
+<div id="back-to-top" onclick="scrollToTop()">
+    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png" alt="Volver arriba" style="width: 40px; height: 40px;">
+</div>
+
+    
+    
+
+
+
+
+
+
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -1081,7 +1099,28 @@ var ml_account = ml('accounts', '3336910', 't8p6n6m7b3', 'load');
 </script>  
     
     
+
+
+
+
     
+    <script>
+// Force scroll to top on page load
+(function() {
+    // Immediate scroll
+    window.scrollTo(0, 0);
+    
+    // Scroll again after a tiny delay (handles any delayed scrolling)
+    setTimeout(function() {
+        window.scrollTo(0, 0);
+    }, 10);
+    
+    // One more time after everything loads
+    window.addEventListener('load', function() {
+        window.scrollTo(0, 0);
+    });
+})();
+</script>
     
     
 </body>
