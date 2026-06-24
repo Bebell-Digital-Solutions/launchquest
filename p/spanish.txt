@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaunchQuest | Explora. Lanza. Logra.</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#001F4D', 
+                        darkNavy: '#001533', 
+                        blue: '#2E7CF6', 
+                        orange: '#FF6B00', 
+                        success: '#22C55E',
+                        surface: '#F8FAFC',
+                        grayOrbit: '#D9DDE3' 
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+
+    <link rel="icon" href="https://ik.imagekit.io/bebell/LaunchQuest/favicon-launchquest.png?updatedAt=1782239724056" type="image/png">
+
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        body { 
+            overflow-x: hidden; 
+            background-color: #FFFFFF;
+            cursor: none; /* Ocultar cursor predeterminado para el cursor personalizado */
+        }
+        
+        /* Cursor Personalizado (Solo Escritorio) */
+        @media (pointer: fine) {
+            .custom-cursor {
+                position: fixed;
+                top: 0; left: 0;
+                width: 20px; height: 20px;
+                background-color: rgba(255, 107, 0, 0.5);
+                border-radius: 50%;
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                z-index: 9999;
+                transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+            }
+            .custom-cursor.hover {
+                width: 50px; height: 50px;
+                background-color: rgba(255, 107, 0, 0.2);
+                border: 1px solid #FF6B00;
+            }
+        }
+        @media (pointer: coarse) {
+            body { cursor: auto; }
+            .custom-cursor { display: none; }
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #001533; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .rocket-loader {
+            font-size: 4rem; color: #FF6B00;
+            animation: bounceFly 1s infinite alternate ease-in-out;
+        }
+        @keyframes bounceFly {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        /* Navbar Glassmorphism */
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Línea de Tiempo (Journey) */
+        .timeline-container { position: relative; padding-left: 2.5rem; margin-left: 1rem; }
+        
+        @media (min-width: 768px) {
+            .timeline-container { padding-left: 3.5rem; margin-left: 2rem; }
+        }
+        .timeline-line-bg { position: absolute; left: 0; top: 14px; bottom: 0; width: 2px; background: #e5e7eb; }
+        .timeline-line-progress { position: absolute; left: 0; top: 14px; width: 2px; background: #FF6B00; height: 0%; }
+        .timeline-dot {
+            width: 16px; height: 16px; border-radius: 50%; background: #FF6B00;
+            position: absolute; left: -2.5rem; top: 6px;
+            transform: translateX(-7px);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.2);
+            z-index: 10;
+        }
+        
+        @media (min-width: 768px) {
+            .timeline-dot { left: -3.5rem; }
+        }
+        
+        /* Acordeón de Preguntas Frecuentes */
+        .faq-answer {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+        }
+        .faq-item.active .faq-answer { max-height: 500px; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }  
+        
+        /* Estilos de FAQ */
+        .faq-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .faq-item:hover {
+            border-color: #FF6B00;
+        }
+        .faq-item.active {
+            border-color: #FF6B00;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.08);
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }       
+        
+        /* Estilos de tarjetas de testimonios */
+        .testimonial-card {
+            min-width: 360px;
+            max-width: 400px;
+            background: white;
+            border: 1px solid #f3f4f6;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex-shrink: 0;
+        }
+        @media (max-width: 640px) {
+            .testimonial-card {
+                min-width: 300px;
+            }
+        }
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+        .testimonial-stars {
+            color: #FF6B00;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* Animación Marquee (Bucle infinito de testimonios) */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+        }
+        .marquee-track {
+            display: flex;
+            gap: 1rem;
+            width: max-content;
+            animation: scrollMarquee 40s linear infinite;
+            padding: 2rem 0;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scrollMarquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 1rem)); }
+        }
+
+        /* Partículas flotantes */
+        .particle { position: absolute; border-radius: 50%; background: #2E7CF6; opacity: 0.2; pointer-events: none; }
+    </style>
+    
+    
+  <script>
+    var ml_webform_6119246 = ml_account('webforms', '6119246', 'h1b9p6', 'load');
+    ml_webform_6119246('animation', 'fadeIn');
+</script>
+
+    
+</head>
+<body class="text-navy antialiased font-sans">
+
+    <div class="custom-cursor" id="custom-cursor"></div>
+
+    <div id="preloader">
+        <i class="ph-fill ph-rocket rocket-loader mb-4"></i>
+        <div class="text-white font-bold tracking-widest uppercase text-sm animate-pulse">Encendiendo Motores...</div>
+    </div>
+
+<nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="#" class="flex-shrink-0 cursor-hover">
+                    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/5d27a133ec69b686657eac98903fe6df64338a29.png" alt="LaunchQuest Logo" class="hidden md:block h-10 w-auto">
+                    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/81e8fad1f6581ab4477a0d74df288c9bdc3a6263.png" alt="LaunchQuest Icon" class="md:hidden h-10 w-auto">
+                </a>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-sm font-semibold hover:text-orange transition-colors cursor-hover">Programa</a>
+                    <a href="#benefits" class="text-sm font-semibold hover:text-orange transition-colors cursor-hover">Beneficios</a>
+                    <a href="#journey" class="text-sm font-semibold hover:text-orange transition-colors cursor-hover">Cronograma</a>
+                    <a href="mailto:hello@launchquest.io" class="text-sm font-semibold hover:text-orange transition-colors cursor-hover">Contacto</a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="english.html" class="rounded-full overflow-hidden w-8 h-8 transition-all cursor-hover hover:scale-110 flex items-center justify-center" title="Cambiar a Inglés">
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/050703a1a818733ee85b103a6a8c4ea5180ade19.png" class="w-full h-full object-cover pointer-events-none" alt="Cambiar a Inglés">
+                    </a>
+                    <a href="javascript:;" onclick="if(typeof ml_webform_6119246 !== 'undefined') ml_webform_6119246('show');" class="bg-navy text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-orange transition-colors cursor-hover">Aplica Ahora</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-navy p-2 focus:outline-none cursor-hover">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-1 text-center">
+                <a href="#about" class="block px-3 py-3 text-base font-medium text-navy hover:bg-surface rounded-md">Programa</a>
+                <a href="#benefits" class="block px-3 py-3 text-base font-medium text-navy hover:bg-surface rounded-md">Beneficios</a>
+                <a href="#journey" class="block px-3 py-3 text-base font-medium text-navy hover:bg-surface rounded-md">Cronograma</a>
+                <a href="javascript:;" onclick="if(typeof ml_webform_6119246 !== 'undefined') ml_webform_6119246('show');" class="block px-3 py-3 mt-4 text-base font-bold bg-orange text-white rounded-md">Aplica Ahora</a>
+                
+                <div class="flex justify-center mt-6 pt-4 border-t border-gray-100">
+                    <a href="english.html" class="rounded-full overflow-hidden w-10 h-10 transition-all hover:scale-110 flex items-center justify-center" title="Cambiar a Inglés">
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/050703a1a818733ee85b103a6a8c4ea5180ade19.png" class="w-full h-full object-cover pointer-events-none" alt="Cambiar a Inglés">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    
+    <section id="hero" class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-white lg:bg-transparent">
+        <div class="hidden lg:block absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://ik.imagekit.io/bebell/LaunchQuest/launchQuest-background-hero-image-rocket.webp');"></div>
+        
+        <div id="particles-container" class="absolute inset-0 z-0 pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
+                
+                <div class="hero-content relative z-20 flex flex-col items-center lg:items-start w-full">
+                    <div class="inline-flex items-center space-x-2 bg-orange/10 text-orange px-4 py-2 rounded-full mb-6 text-sm font-semibold">
+                        <span class="relative flex h-3 w-3">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-orange"></span>
+                        </span>
+                        <span>Inscripciones Abiertas</span>
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-bold leading-tight mb-6 text-navy drop-shadow-sm">
+                        Lanza una Startup<br/><span class="text-blue drop-shadow-none">con IA en 30 días</span>
+                    </h1>
+                    <p class="text-lg text-gray-800 font-medium mb-8 max-w-lg drop-shadow-sm">
+                        Únete a un grupo guiado diseñado para ayudarte a validar, construir y lanzar tu idea de startup más rápido usando inteligencia artificial.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start w-full sm:w-auto">
+                        <a href="javascript:;" onclick="if(typeof ml_webform_6119246 !== 'undefined') ml_webform_6119246('show');" class="bg-orange text-white text-center px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#e66000] hover:shadow-lg hover:shadow-orange/30 transition-all cursor-hover transform hover:-translate-y-1">Aplica para el Próximo Grupo</a>
+                        <a href="#about" class="bg-navy text-white text-center border border-navy/20 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-darkNavy transition-all cursor-hover">Saber Más</a>
+                    </div>
+                </div>
+                
+                 <div class="hero-visual relative flex justify-center lg:justify-start items-center mt-16 w-full z-10">
+                    <div class="relative flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
+                        
+                        <div class="absolute inset-0 bg-white rounded-full blur-3xl w-full h-full -z-10"></div>
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/5d27a133ec69b686657eac98903fe6df64338a29.png" alt="LaunchQuest 3D Logo" class="w-full max-w-[300px] sm:max-w-[400px] rounded-2xl z-10 p-2 transform -rotate-2 hover:rotate-0 transition-transform duration-500 shadow-xl">
+                        
+                        <div class="bg-white p-4 rounded-xl shadow-xl z-20 flex items-center space-x-4 animate-bounce" style="animation-duration: 3s;">
+                            <div class="bg-surface p-2 rounded-full text-success">
+                                <i class="ph-fill ph-check-circle text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Success Rate</p>
+                                <p class="text-lg font-bold text-navy leading-none mt-1">100% MVP</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+  
+    <section id="about" class="py-24 bg-darkNavy text-center relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 gs-reveal">
+            <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-4">Sobre LaunchQuest</h3>
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">De la Idea a la Realidad en 30 Días</h2>
+            
+            <div class="space-y-6">
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed">
+                    LaunchQuest es un programa intensivo de creación de startups diseñado para aspirantes a emprendedores, creadores y profesionales que desean convertir una idea en un negocio real usando IA.
+                </p>
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed">
+                    No solo enseñamos teoría. Construirás un producto de software real, lo validarás con usuarios reales y lo presentarás a los jueces en el Demo Day.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    
+    
+    
+    
+
+    <section id="about-details" class="py-20 pb-32 bg-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center gap-16">
+                
+                <div class="flex flex-row justify-center items-center gap-4 sm:gap-12 md:gap-24 w-full gs-reveal">
+                    <div class="flex flex-col items-center">
+                        <div class="text-3xl sm:text-5xl font-bold text-orange mb-1 sm:mb-2"><span class="counter" data-target="30">0</span></div>
+                        <div class="text-[10px] sm:text-lg text-gray-600 font-medium uppercase tracking-wider whitespace-nowrap">Días para Lanzar</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-3xl sm:text-5xl font-bold text-orange mb-1 sm:mb-2"><span class="counter" data-target="100">0</span>%</div>
+                        <div class="text-[10px] sm:text-lg text-gray-600 font-medium uppercase tracking-wider whitespace-nowrap">Negocios Reales</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-3xl sm:text-5xl font-bold text-orange mb-1 sm:mb-2">Cero</div>
+                        <div class="text-[10px] sm:text-lg text-gray-600 font-medium uppercase tracking-wider whitespace-nowrap">Necesidad de Programar</div>
+                    </div>
+                </div>
+
+                <div class="w-full max-w-5xl gs-reveal">
+                    <div class="relative">
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/3ac0b6c391fabe1542e13b0dfc56ad5937997270.png" alt="Equipo de LaunchQuest" class="rounded-2xl shadow-xl w-full object-cover h-auto">
+                        <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/10"></div>
+                        <div class="absolute -top-4 -right-2 md:-top-6 md:-right-6 bg-navy text-white p-3 md:p-4 rounded-xl shadow-lg transform rotate-6 z-10">
+                            <i class="ph-fill ph-rocket-launch text-2xl md:text-3xl mb-1 md:mb-2 text-orange"></i>
+                            <p class="font-bold text-xs md:text-sm whitespace-nowrap">Construye. Lanza. Crece.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-24 gs-reveal">
+                <h3 class="text-3xl font-bold text-navy mb-10 text-center">¿Quiénes pueden participar?</h3>
+                <div class="flex flex-wrap justify-center gap-4 mb-12 max-w-4xl mx-auto">
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:-rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Emprendedores</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Estudiantes Universitarios</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:-rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Profesionales Independientes</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Diseñadores y Desarrolladores</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:-rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Especialistas en Marketing</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Dueños de Negocios</span>
+                    <span class="px-6 py-3 bg-white border border-gray-200 rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:border-orange hover:text-orange transition-all duration-300 hover:-rotate-2 hover:scale-105 hover:shadow-md cursor-hover inline-block">Sin Experiencia Técnica</span>
+                </div>
+                <div class="bg-darkNavy border border-blue/10 rounded-2xl p-12 text-center max-w-3xl mx-auto shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-orange opacity-20 blur-3xl rounded-full pointer-events-none"></div>
+                    <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue opacity-20 blur-3xl rounded-full pointer-events-none"></div>
+                    <p class="text-orange font-bold mb-4 text-2xl relative z-10">No necesitas programar.</p>
+                    <p class="text-gray-300 text-lg relative z-10">Los participantes aprenderán a usar herramientas modernas de IA, plataformas no-code y técnicas de Vibe Coding para desarrollar sus proyectos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    
+    
+    
+    
+
+    <section id="benefits" class="pt-24 pb-[calc(6rem+5vw)] text-white relative z-20">
+        <div class="absolute inset-0 bg-darkNavy z-0" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 5vw));"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 gs-reveal">
+                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-2">Beneficios del Programa</h3>
+                <h2 class="text-4xl font-bold mb-6">¿Por qué unirte a LaunchQuest?</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-lightning text-3xl text-orange mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Flujos de Trabajo con IA</h4>
+                    <p class="text-gray-300 text-sm">Aprende a usar herramientas de IA de vanguardia para acelerar el desarrollo y marketing.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-target text-3xl text-blue mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Validación de Startup</h4>
+                    <p class="text-gray-300 text-sm">Deja de adivinar. Usa marcos de trabajo probados para asegurar que tu idea resuelva un problema real.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-cube text-3xl text-success mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Creación de MVP</h4>
+                    <p class="text-gray-300 text-sm">Construye un producto funcional que puedas mostrar a usuarios e inversores sin escribir código.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-users-three text-3xl text-orange mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Mentoría</h4>
+                    <p class="text-gray-300 text-sm">Obtén comentarios directos y orientación de fundadores experimentados y expertos de la industria.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-globe-hemisphere-west text-3xl text-blue mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Apoyo de la Comunidad</h4>
+                    <p class="text-gray-300 text-sm">Rodéate de compañeros ambiciosos que construyen el futuro junto a ti.</p>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors cursor-hover gs-reveal">
+                    <i class="ph ph-flag-checkered text-3xl text-success mb-4 block"></i>
+                    <h4 class="text-xl font-bold mb-3">Preparación para el Lanzamiento</h4>
+                    <p class="text-gray-300 text-sm">Domina el pitching, storytelling y estrategias de go-to-market para adquirir usuarios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+   <section id="testimonials" class="py-36 mb-8 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-0 gs-reveal">
+            
+                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-0 i18n" data-en="Testimonials" data-es="Testimonios">Testimonios</h3>
+                
+                <h2 class="text-4xl font-bold text-navy mb-6">Lo Que Dicen Nuestros Exalumnos</h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Resultados reales de personas reales que convirtieron sus ideas en productos lanzados.</p>
+            </div>
+        </div>
+
+        <div class="marquee-container mb-6">
+            <div class="marquee-track">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;LaunchQuest completely changed how I think about building products. In 30 days I went from a napkin idea to a working SaaS with paying customers.&quot;" data-es="&quot;LaunchQuest cambió completamente cómo pienso sobre crear productos. En 30 días pasé de una idea en una servilleta a un SaaS funcional con clientes.&quot;">&quot;LaunchQuest cambió completamente cómo pienso sobre crear productos. En 30 días pasé de una idea en una servilleta a un SaaS funcional con clientes.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue font-bold text-sm">MC</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">María Castillo</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="SaaS Founder, Cohort 3" data-es="Fundadora SaaS, Cohorte 3">Fundadora SaaS, Cohorte 3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;I had zero coding experience. After LaunchQuest, I built and launched my own app that now has 500+ users. The mentors are incredible.&quot;" data-es="&quot;No tenía experiencia en código. Después de LaunchQuest, construí y lancé mi propia app con 500+ usuarios. Los mentores son increíbles.&quot;">&quot;No tenía experiencia en código. Después de LaunchQuest, construí y lancé mi propia app con 500+ usuarios. Los mentores son increíbles.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center text-orange font-bold text-sm">JR</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">James Rodriguez</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="App Creator, Cohort 2" data-es="Creador de App, Cohorte 2">Creador de App, Cohorte 2</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;The community alone is worth it. I found my co-founder here and we just raised our first round of funding. Best decision I ever made.&quot;" data-es="&quot;Solo la comunidad vale la pena. Aquí encontré a mi co-fundador y acabamos de levantar nuestra primera ronda de inversión.&quot;">&quot;Solo la comunidad vale la pena. Aquí encontré a mi co-fundador y acabamos de levantar nuestra primera ronda de inversión.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success font-bold text-sm">AL</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Andrea López</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="CTO, FinTech Startup" data-es="CTO, Startup FinTech">CTO, Startup FinTech</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;Demo Day was the highlight. Pitching to real investors with a product I built in weeks was surreal. This program is the real deal.&quot;" data-es="&quot;El Demo Day fue lo mejor. Presentar a inversores reales con un producto que construí en semanas fue surrealista.&quot;">&quot;El Demo Day fue lo mejor. Presentar a inversores reales con un producto que construí en semanas fue surrealista.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-navy/10 flex items-center justify-center text-navy font-bold text-sm">DP</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Daniel Park</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Startup Founder, Cohort 4" data-es="Fundador, Cohorte 4">Fundador, Cohorte 4</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;As a designer, I always had ideas but never knew how to bring them to life. LaunchQuest gave me the tools and confidence to ship.&quot;" data-es="&quot;Como diseñadora, siempre tuve ideas pero nunca supe cómo hacerlas realidad. LaunchQuest me dio las herramientas.&quot;">&quot;Como diseñadora, siempre tuve ideas pero nunca supe cómo hacerlas realidad. LaunchQuest me dio las herramientas.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue font-bold text-sm">SV</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Sofía Vega</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Product Designer, Cohort 1" data-es="Diseñadora de Producto, Cohorte 1">Diseñadora de Producto, Cohorte 1</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;I was skeptical at first, but the structured approach really works. Went from idea to $2K MRR in under two months after the program.&quot;" data-es="&quot;Era escéptico al principio, pero el enfoque estructurado realmente funciona. Pasé de idea a $2K MRR en dos meses.&quot;">&quot;Era escéptico al principio, pero el enfoque estructurado realmente funciona. Pasé de idea a $2K MRR en dos meses.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center text-orange font-bold text-sm">RM</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Roberto Mendez</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Indie Hacker, Cohort 5" data-es="Indie Hacker, Cohorte 5">Indie Hacker, Cohorte 5</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;LaunchQuest completely changed how I think about building products. In 30 days I went from a napkin idea to a working SaaS with paying customers.&quot;" data-es="&quot;LaunchQuest cambió completamente cómo pienso sobre crear productos. En 30 días pasé de una idea en una servilleta a un SaaS funcional con clientes.&quot;">&quot;LaunchQuest cambió completamente cómo pienso sobre crear productos. En 30 días pasé de una idea en una servilleta a un SaaS funcional con clientes.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue font-bold text-sm">MC</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">María Castillo</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="SaaS Founder, Cohort 3" data-es="Fundadora SaaS, Cohorte 3">Fundadora SaaS, Cohorte 3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;I had zero coding experience. After LaunchQuest, I built and launched my own app that now has 500+ users. The mentors are incredible.&quot;" data-es="&quot;No tenía experiencia en código. Después de LaunchQuest, construí y lancé mi propia app con 500+ usuarios. Los mentores son increíbles.&quot;">&quot;No tenía experiencia en código. Después de LaunchQuest, construí y lancé mi propia app con 500+ usuarios. Los mentores son increíbles.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center text-orange font-bold text-sm">JR</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">James Rodriguez</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="App Creator, Cohort 2" data-es="Creador de App, Cohorte 2">Creador de App, Cohorte 2</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;The community alone is worth it. I found my co-founder here and we just raised our first round of funding. Best decision I ever made.&quot;" data-es="&quot;Solo la comunidad vale la pena. Aquí encontré a mi co-fundador y acabamos de levantar nuestra primera ronda de inversión.&quot;">&quot;Solo la comunidad vale la pena. Aquí encontré a mi co-fundador y acabamos de levantar nuestra primera ronda de inversión.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success font-bold text-sm">AL</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Andrea López</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="CTO, FinTech Startup" data-es="CTO, Startup FinTech">CTO, Startup FinTech</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;Demo Day was the highlight. Pitching to real investors with a product I built in weeks was surreal. This program is the real deal.&quot;" data-es="&quot;El Demo Day fue lo mejor. Presentar a inversores reales con un producto que construí en semanas fue surrealista.&quot;">&quot;El Demo Day fue lo mejor. Presentar a inversores reales con un producto que construí en semanas fue surrealista.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-navy/10 flex items-center justify-center text-navy font-bold text-sm">DP</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Daniel Park</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Startup Founder, Cohort 4" data-es="Fundador, Cohorte 4">Fundador, Cohorte 4</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;As a designer, I always had ideas but never knew how to bring them to life. LaunchQuest gave me the tools and confidence to ship.&quot;" data-es="&quot;Como diseñadora, siempre tuve ideas pero nunca supe cómo hacerlas realidad. LaunchQuest me dio las herramientas.&quot;">&quot;Como diseñadora, siempre tuve ideas pero nunca supe cómo hacerlas realidad. LaunchQuest me dio las herramientas.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue font-bold text-sm">SV</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Sofía Vega</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Product Designer, Cohort 1" data-es="Diseñadora de Producto, Cohorte 1">Diseñadora de Producto, Cohorte 1</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars mb-3">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="text-gray-600 text-sm mb-5 leading-relaxed i18n" data-en="&quot;I was skeptical at first, but the structured approach really works. Went from idea to $2K MRR in under two months after the program.&quot;" data-es="&quot;Era escéptico al principio, pero el enfoque estructurado realmente funciona. Pasé de idea a $2K MRR en dos meses.&quot;">&quot;Era escéptico al principio, pero el enfoque estructurado realmente funciona. Pasé de idea a $2K MRR en dos meses.&quot;</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center text-orange font-bold text-sm">RM</div>
+                        <div>
+                            <p class="font-bold text-sm text-navy">Roberto Mendez</p>
+                            <p class="text-xs text-gray-400 i18n" data-en="Indie Hacker, Cohort 5" data-es="Indie Hacker, Cohorte 5">Indie Hacker, Cohorte 5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+    <section id="journey" class="py-24 bg-surface relative z-10 -mt-[5vw]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-[5vw]">
+            <div class="text-center mb-16 gs-reveal">
+                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-2">El Viaje del Grupo</h3>
+                <h2 class="text-4xl font-bold text-navy mb-6">Tu Camino hacia el Lanzamiento</h2>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-line-bg"></div>
+                <div class="timeline-line-progress" id="journey-progress"></div>
+
+                <div class="space-y-12">
+                    <div class="relative gs-reveal">
+                        <div class="timeline-dot"></div>
+                        <span class="text-sm font-bold text-orange uppercase tracking-wide">Semana 1</span>
+                        <h4 class="text-2xl font-bold text-navy mt-1 mb-2">Idea y Validación</h4>
+                        <p class="text-gray-600">Investigación de mercado, validación de problemas, identificación de clientes y creación de modelo de negocio.</p>
+                    </div>
+                    <div class="relative gs-reveal">
+                        <div class="timeline-dot"></div>
+                        <span class="text-sm font-bold text-blue uppercase tracking-wide">Semana 2</span>
+                        <h4 class="text-2xl font-bold text-navy mt-1 mb-2">Desarrollo de Producto</h4>
+                        <p class="text-gray-600">Descripción general de herramientas de IA, prototipado rápido, fundamentos de vibe coding y construcción de tu MVP.</p>
+                    </div>
+                    <div class="relative gs-reveal">
+                        <div class="timeline-dot"></div>
+                        <span class="text-sm font-bold text-success uppercase tracking-wide">Semana 3</span>
+                        <h4 class="text-2xl font-bold text-navy mt-1 mb-2">Lanzamiento y Crecimiento</h4>
+                        <p class="text-gray-600">Creación de landing page, branding, estrategia de marketing, adquisición de clientes y sistemas de ventas.</p>
+                    </div>
+                    <div class="relative gs-reveal">
+                        <div class="timeline-dot"></div>
+                        <span class="text-sm font-bold text-navy uppercase tracking-wide">Semana 4</span>
+                        <h4 class="text-2xl font-bold text-navy mt-1 mb-2">Preparación para Demo Day</h4>
+                        <p class="text-gray-600">Storytelling, desarrollo de pitch deck, presentaciones para inversores, proyecciones financieras y pitch final.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+ <section id="faq" class="py-40 mb-8 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 gs-reveal">
+                <h3 class="text-orange font-bold uppercase tracking-wider text-sm mb-2 i18n" data-en="FAQ" data-es="Preguntas Frecuentes">Preguntas Frecuentes</h3>
+                <h2 class="text-4xl font-bold text-navy mb-6 i18n" data-en="Frequently Asked Questions" data-es="Preguntas Frecuentes">Preguntas Frecuentes</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="Do I need to know how to code?" data-es="¿Necesito saber programar?">¿Necesito saber programar?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="Not at all! LaunchQuest is designed for non-technical founders. We teach you to use AI tools, no-code platforms, and Vibe Coding techniques. You will build a real product without writing a single line of code." data-es="¡Para nada! LaunchQuest está diseñado para fundadores no técnicos. Te enseñamos a usar herramientas de IA, plataformas no-code y técnicas de Vibe Coding. Construirás un producto real sin escribir una sola línea de código.">¡Para nada! LaunchQuest está diseñado para fundadores no técnicos. Te enseñamos a usar herramientas de IA, plataformas no-code y técnicas de Vibe Coding. Construirás un producto real sin escribir una sola línea de código.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="How long is the program?" data-es="¿Cuánto dura el programa?">¿Cuánto dura el programa?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="The program runs for 4 weeks with live sessions, workshops, and mentorship. You should expect to dedicate approximately 10-15 hours per week to get the most out of it." data-es="El programa dura 4 semanas con sesiones en vivo, talleres y mentoría. Debes dedicar aproximadamente 10-15 horas por semana para aprovecharlo al máximo.">El programa dura 4 semanas con sesiones en vivo, talleres y mentoría. Debes dedicar aproximadamente 10-15 horas por semana para aprovecharlo al máximo.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="What happens on Demo Day?" data-es="¿Qué pasa en el Demo Day?">¿Qué pasa en el Demo Day?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="Demo Day is the grand finale where you pitch your finished product to a panel of investors, mentors, and industry experts. Top performers may receive mentorship extensions, investment introductions, or special prizes." data-es="El Demo Day es la gran final donde presentas tu producto terminado ante un panel de inversores, mentores y expertos de la industria. Los mejores pueden recibir extensiones de mentoría o introducciones a inversores.">El Demo Day es la gran final donde presentas tu producto terminado ante un panel de inversores, mentores y expertos de la industria. Los mejores pueden recibir extensiones de mentoría o introducciones a inversores.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="What AI tools will I learn?" data-es="¿Qué herramientas de IA aprenderé?">¿Qué herramientas de IA aprenderé?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="You will work with cutting-edge AI tools for product development, market research, content creation, and design. Specific tools include AI-powered builders, chat assistants, image generators, and no-code platforms enhanced with AI capabilities." data-es="Trabajarás con herramientas de IA de vanguardia para desarrollo de producto, investigación de mercado, creación de contenido y diseño. Incluye builders con IA, asistentes de chat, generadores de imágenes y plataformas no-code.">Trabajarás con herramientas de IA de vanguardia para desarrollo de producto, investigación de mercado, creación de contenido y diseño. Incluye builders con IA, asistentes de chat, generadores de imágenes y plataformas no-code.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="Is there a money-back guarantee?" data-es="¿Hay garantía de devolución?">¿Hay garantía de devolución?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="Yes. If you complete all the program requirements and are not satisfied with the results, we offer a full refund within the first 14 days. We believe in the value we provide." data-es="Sí. Si completas todos los requisitos del programa y no estás satisfecho con los resultados, ofrecemos reembolso completo dentro de los primeros 14 días. Creemos en el valor que proporcionamos.">Sí. Si completas todos los requisitos del programa y no estás satisfecho con los resultados, ofrecemos reembolso completo dentro de los primeros 14 días. Creemos en el valor que proporcionamos.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="Can I participate if I don't have a business idea yet?" data-es="¿Puedo participar si aún no tengo una idea de negocio?">¿Puedo participar si aún no tengo una idea de negocio?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="Absolutely! Week 1 is entirely dedicated to ideation and validation. We will help you discover opportunities and find an idea that aligns with your skills, passion, and market demand." data-es="¡Por supuesto! La Semana 1 está dedicada enteramente a la ideación y validación. Te ayudaremos a descubrir oportunidades y encontrar una idea que se alinee con tus habilidades.">¡Por supuesto! La Semana 1 está dedicada enteramente a la ideación y validación. Te ayudaremos a descubrir oportunidades y encontrar una idea que se alinee con tus habilidades.</div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="w-full flex items-center justify-between p-6 text-left cursor-hover">
+                        <span class="font-semibold text-navy pr-4 i18n" data-en="How is this different from a regular course?" data-es="¿En qué se diferencia de un curso regular?">¿En qué se diferencia de un curso regular?</span>
+                        <i class="ph-bold ph-caret-down text-orange text-xl faq-icon flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="px-6 pb-6 text-gray-600 i18n" data-en="LaunchQuest is not a passive course. It is an intensive, cohort-based experience where you build a real product alongside peers and mentors. You get accountability, live feedback, networking, and a Demo Day pitch &mdash; things no self-paced course can offer." data-es="LaunchQuest no es un curso pasivo. Es una experiencia intensiva basada en cohortes donde construyes un producto real junto a compañeros y mentores. Obtienes responsabilidad, feedback en vivo, networking y un pitch en Demo Day.">LaunchQuest no es un curso pasivo. Es una experiencia intensiva basada en cohortes donde construyes un producto real junto a compañeros y mentores. Obtienes responsabilidad, feedback en vivo, networking y un pitch en Demo Day.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+    <section id="register" class="pb-24 relative z-20 -mt-[5vw]">
+        <div class="absolute inset-0 bg-darkNavy z-0" style="clip-path: polygon(0 0, 100% 5vw, 100% 100%, 0 100%);"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-[calc(6rem+5vw)] text-center">
+            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl gs-reveal">
+                <div class="inline-flex items-center space-x-2 bg-orange/10 text-orange px-4 py-2 rounded-full mb-6 text-sm font-semibold">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-orange"></span>
+                    </span>
+                    <span>El Próximo Grupo Comienza Pronto</span>
+                </div>
+
+                <h2 class="text-4xl md:text-5xl font-bold text-navy mb-4">Únete al Próximo Grupo</h2>
+                <p class="text-gray-500 mb-10 text-lg max-w-2xl mx-auto">Los cupos son limitados. Aplica ahora antes de que se cierre el periodo de inscripción para asegurar tu lugar.</p>
+
+                <a href="javascript:;" onclick="ml_webform_6119246('show')" class="bg-orange text-white px-10 py-5 rounded-xl font-bold text-xl hover:bg-[#e66000] hover:shadow-lg hover:shadow-orange/30 transition-all cursor-hover inline-flex items-center group">
+                    <span class="mr-3">Aplica Ahora</span>
+                    <i class="ph-bold ph-rocket-launch group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    
+
+
+ 
+
+
+    <footer class="bg-darkNavy pb-8 pt-12 text-center text-white relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <img src="https://bucket.mlcdn.com/a/3336/3336910/images/faf522af0370c681b61611209d66022cf9fdba1c.png" alt="LaunchQuest Logo" class="h-28 mx-auto mb-8 object-contain opacity-90">
+            
+            <div class="flex justify-center items-center space-x-6 mb-12 flex-wrap gap-y-4">
+                <a href="#" class="text-gray-400 hover:text-white cursor-hover transition-colors">Política de Privacidad</a>
+                
+                <div class="relative group inline-block">
+                    <span class="text-gray-400 cursor-pointer hover:text-white transition-colors">Créditos</span>
+                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-white text-navy text-xs rounded px-3 py-2 whitespace-nowrap shadow-xl border border-gray-100 z-10">
+                        <a href="https://lordicon.com/" target="_blank" class="hover:text-orange font-semibold transition-colors">Iconos por Lordicon.com</a>
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px border-4 border-transparent border-t-white"></div>
+                    </div>
+                </div>
+
+                <a href="#" class="text-gray-400 hover:text-white cursor-hover transition-colors">Términos de Servicio</a>
+                <a href="#" class="text-gray-400 hover:text-white cursor-hover transition-colors">Ayuda</a>
+            </div>
+
+            <p class="text-gray-500 text-sm">
+                &copy; <span id="year"></span> LaunchQuest. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+    
+    
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Lógica del Preloader
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                preloader.style.opacity = '0';
+                setTimeout(() => preloader.style.display = 'none', 500);
+            }, 1500);
+
+            // 2. Establecer Año Actual en el Footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // 3. Lógica del Cursor Personalizado (Escritorio)
+            const cursor = document.getElementById('custom-cursor');
+            if (window.matchMedia("(pointer: fine)").matches) {
+                document.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
+                
+                const interactives = document.querySelectorAll('.cursor-hover, a, button, input, textarea, select');
+                interactives.forEach(el => {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+                });
+            }
+
+            // 4. Efecto de Scroll del Navbar y Menú Móvil
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('nav-glass');
+                    navbar.classList.remove('py-4');
+                    navbar.classList.add('py-2');
+                } else {
+                    navbar.classList.remove('nav-glass');
+                    navbar.classList.remove('py-2');
+                    navbar.classList.add('py-4');
+                }
+            });
+
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // 5. Animación de Contador
+            const animateCounter = (el) => {
+                const target = parseInt(el.getAttribute('data-target'));
+                const duration = 2000; 
+                const step = target / (duration / 16); 
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        el.innerText = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        el.innerText = target;
+                    }
+                };
+                
+                updateCounter();
+            };
+
+            // 6. Animaciones de Scroll GSAP
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                const revealElements = document.querySelectorAll('.gs-reveal');
+                revealElements.forEach(el => {
+                    gsap.fromTo(el, 
+                        {
+                            y: 60,
+                            opacity: 0
+                        },
+                        {
+                            y: 0,
+                            opacity: 1,
+                            duration: 1,
+                            ease: "power2.out",
+                            scrollTrigger: {
+                                trigger: el,
+                                start: "top 85%",
+                                toggleActions: "play none none none"
+                            }
+                        }
+                    );
+                });
+
+                const counters = document.querySelectorAll('.counter');
+                let countersAnimated = false;
+                
+                ScrollTrigger.create({
+                    trigger: '#about-details',
+                    start: "top 70%",
+                    onEnter: () => {
+                        if (!countersAnimated) {
+                            counters.forEach(counter => animateCounter(counter));
+                            countersAnimated = true;
+                        }
+                    }
+                });
+
+                ScrollTrigger.create({
+                    trigger: '.timeline-container',
+                    start: "top 50%",
+                    end: "bottom 50%",
+                    onUpdate: (self) => {
+                        const progress = document.getElementById('journey-progress');
+                        if (progress) {
+                            progress.style.height = `calc(${self.progress * 100}% - 14px)`;
+                        }
+                    }
+                });
+
+                // Arreglo del bug del #process faltante
+                const processSection = document.getElementById('process');
+                if (processSection) {
+                    ScrollTrigger.create({
+                        trigger: processSection,
+                        start: "top 60%",
+                        end: "bottom bottom",
+                        onUpdate: (self) => {
+                            const processLine = document.querySelector('.process-line');
+                            if (processLine) {
+                                processLine.style.width = (self.progress * 100) + '%';
+                            }
+                        }
+                    });
+                }
+            }
+
+            // 6. Lógica del Acordeón FAQ
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const btn = item.querySelector('button');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        const isActive = item.classList.contains('active');
+                        faqItems.forEach(i => i.classList.remove('active'));
+                        if (!isActive) item.classList.add('active');
+                    });
+                }
+            });
+
+            // 7. Partículas Flotantes en la Sección Hero
+            const particlesContainer = document.getElementById('particles-container');
+            if (particlesContainer && typeof gsap !== 'undefined') {
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    const size = Math.random() * 10 + 5;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    
+                    particlesContainer.appendChild(particle);
+                    
+                    gsap.to(particle, {
+                        x: (Math.random() - 0.5) * 100,
+                        y: (Math.random() - 0.5) * 100,
+                        opacity: Math.random() * 0.3 + 0.1,
+                        duration: Math.random() * 5 + 5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "power1.inOut",
+                        delay: Math.random() * 2
+                    });
+                }
+            }
+
+            // 8. Scroll suave para enlaces de anclaje
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // 9. Efecto Parallax para visual del hero
+            const heroVisual = document.querySelector('.hero-visual');
+            if (heroVisual) {
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * 0.02;
+                    const img = heroVisual.querySelector('img');
+                    if (img) {
+                        img.style.transform = `translateY(${rate}px) rotate(-2deg)`;
+                    }
+                });
+            }
+
+            // 13. Animación de Entrada Hero GSAP
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                const heroTl = gsap.timeline({ delay: 1.6 });
+                heroTl
+                    .from(heroContent.querySelector('.inline-flex'), {
+                        y: 30, opacity: 0, duration: 0.6, ease: "power2.out"
+                    })
+                    .from(heroContent.querySelector('h1'), {
+                        y: 40, opacity: 0, duration: 0.8, ease: "power2.out"
+                    }, "-=0.3")
+                    .from(heroContent.querySelector('p'), {
+                        y: 30, opacity: 0, duration: 0.6, ease: "power2.out"
+                    }, "-=0.4")
+                    .from(heroContent.querySelector('.flex'), {
+                        y: 30, opacity: 0, duration: 0.6, ease: "power2.out"
+                    }, "-=0.3");
+            }
+
+            const heroVisualEl = document.querySelector('.hero-visual');
+            if (heroVisualEl) {
+                gsap.from(heroVisualEl, {
+                    x: 80, opacity: 0, duration: 1.2, ease: "power3.out", delay: 1.8
+                });
+            }
+
+            // 14. Entrada GSAP sección testimonios
+            const testimonialsSection = document.getElementById('testimonials');
+            if (testimonialsSection) {
+                gsap.from('.testimonial-card', {
+                    scrollTrigger: {
+                        trigger: testimonialsSection,
+                        start: "top 75%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: "power2.out"
+                });
+            }
+        });
+    </script>
+    
+    
+    
+    
+    
+  <script>
+(function(m,a,i,l,e,r){ m['MailerLiteObject']=e;function f(){
+var c={ a:arguments,q:[]};var r=this.push(c);return "number"!=typeof r?r:f.bind(c.q);}
+f.q=f.q||[];m[e]=m[e]||f.bind(f.q);m[e].q=m[e].q||f.q;r=a.createElement(i);
+var _=a.getElementsByTagName(i)[0];r.async=1;r.src=l+'?v'+(~~(new Date().getTime()/1000000));
+_.parentNode.insertBefore(r,_);})(window, document, 'script', 'https://static.mailerlite.com/js/universal.js', 'ml');
+
+var ml_account = ml('accounts', '3336910', 't8p6n6m7b3', 'load');
+</script>
+
+<script>
+    var ml_webform_6119246 = ml_account('webforms', '6119246', 'h1b9p6', 'load');
+    ml_webform_6119246('animation', 'fadeIn');
+</script>  
+    
+    
+    
+    
+    
+</body>
+</html>
